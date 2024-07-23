@@ -79,7 +79,7 @@ def create_aml_workspace():
         print(f"Failed to create compute instance: {e}")
 
     # Compute cluster creation
-    compute_cluster_name = f"training-{suffix}"
+    compute_cluster_name = "aml-cluster"
     compute_config = AmlCompute.provisioning_configuration(vm_size="STANDARD_DS11_V2", max_nodes=2)
     try:
         compute_cluster = ComputeTarget.create(ws, compute_cluster_name, compute_config)
