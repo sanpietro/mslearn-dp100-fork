@@ -1,5 +1,5 @@
 import sys
-import random 
+import random
 import string
 import subprocess
 from azure.identity import DefaultAzureCredential
@@ -95,12 +95,8 @@ def create_aml_workspace():
     except ComputeTargetException as e:
         print(f"Failed to create compute cluster: {e}")
 
-    # Additional CLI-based commands to create data assets and components
-    run_cli_command(f"az ml data create --name diabetes-folder --path ./data --workspace-name {workspace_name} --resource-group {resource_group}")
-    run_cli_command("az ml component create --file ./fix-missing-data.yml --workspace-name {workspace_name} --resource-group {resource_group}")
-    run_cli_command("az ml component create --file ./normalize-data.yml --workspace-name {workspace_name} --resource-group {resource_group}")
-    run_cli_command("az ml component create --file ./train-decision-tree.yml --workspace-name {workspace_name} --resource-group {resource_group}")
-    run_cli_command("az ml component create --file ./train-logistic-regression.yml --workspace-name {workspace_name} --resource-group {resource_group}")
+    run_cli_command(f'az ml data create --type uri_file --name "diabetes-data" --path ./data/diabetes.csv --workspace-name {workspace_name} --resource-group {resource_group}')
+    
 
 if __name__ == '__main__':
     sys.exit(create_aml_workspace())

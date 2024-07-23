@@ -1,6 +1,7 @@
 import sys
 import random
 import string
+import subprocess
 from azure.identity import DefaultAzureCredential
 from azureml.core import Workspace, ComputeTarget, Datastore, Dataset
 from azureml.core.compute import ComputeInstance, AmlCompute
@@ -19,6 +20,15 @@ def register_resource_provider(credential, subscription_id):
     # Register the machine learning resource provider
     provider = client.providers.register('Microsoft.MachineLearningServices')
     print(f"Registered resource provider: {provider.namespace}")
+
+def run_cli_command(command):
+    """ Run Azure CLI command """
+    try:
+        result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
+        print(result.stdout)
+    except subprocess.CalledProcessError as error:
+        print("CLI Command failed:", error)
+        print(error.output)
 
 def create_aml_workspace():
     credential = DefaultAzureCredential()
@@ -84,6 +94,9 @@ def create_aml_workspace():
         print(f"Compute cluster '{compute_cluster_name}' created successfully.")
     except ComputeTargetException as e:
         print(f"Failed to create compute cluster: {e}")
+
+    run_cli_command(f'az ml data create --type mltable --name "diabetes-training" --path ./diabetes-data --workspace-name {workspace_name} --resource-group {resource_group}')
+    run_cli_command(f'az ml data create --type mltable --name "oj-training" --path ./orange-juice-data --workspace-name {workspace_name} --resource-group {resource_group}')
 
 if __name__ == '__main__':
     sys.exit(create_aml_workspace())
